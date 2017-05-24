@@ -9,9 +9,14 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 var core_1 = require("@angular/core");
+var aws_resource_service_1 = require("./aws-resource.service");
 var AwsResourceComponent = (function () {
-    function AwsResourceComponent() {
+    function AwsResourceComponent(awsResourceService) {
+        this.awsResourceService = awsResourceService;
     }
+    AwsResourceComponent.prototype.ngOnInit = function () {
+        console.log(this.awsResourceService.freeTierDetails(this.resourceName));
+    };
     return AwsResourceComponent;
 }());
 __decorate([
@@ -22,7 +27,8 @@ AwsResourceComponent = __decorate([
     core_1.Component({
         selector: 'aws-resource',
         templateUrl: './aws-resource.component.html'
-    })
+    }),
+    __metadata("design:paramtypes", [aws_resource_service_1.AwsResourceService])
 ], AwsResourceComponent);
 exports.AwsResourceComponent = AwsResourceComponent;
 //# sourceMappingURL=aws-resource.component.js.map

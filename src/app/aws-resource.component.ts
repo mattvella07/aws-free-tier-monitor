@@ -1,18 +1,18 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
+
+import { AwsResourceService } from './aws-resource.service';
 
 @Component({
     selector: 'aws-resource',
     templateUrl: './aws-resource.component.html'
 })
 
-export class AwsResourceComponent {
+export class AwsResourceComponent implements OnInit {
     @Input() resourceName: string;
 
-    /*service: Object;
+    constructor(private awsResourceService: AwsResourceService) { }
 
-    constructor() {
-        this.service = {
-            'name': 'EC2'
-        };
-    }*/
+    ngOnInit(): void {
+        console.log(this.awsResourceService.freeTierDetails(this.resourceName));
+    }
 }
