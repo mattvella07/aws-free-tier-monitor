@@ -10,6 +10,9 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 var core_1 = require("@angular/core");
 var http_1 = require("@angular/http");
+require("rxjs/add/operator/map");
+require("rxjs/add/operator/catch");
+var aws_credentials_1 = require("./config/aws-credentials");
 var AWS = require("aws-sdk");
 var AwsResourceService = (function () {
     function AwsResourceService(http) {
@@ -23,11 +26,7 @@ var AwsResourceService = (function () {
             expirationMonths: 12
         };
         if (resource === 'ec2') {
-            AWS.config.update({
-                region: 'us-east-1',
-                accessKeyId: '',
-                secretAccessKey: ''
-            });
+            AWS.config.update(aws_credentials_1.config);
             var ec2 = new AWS.EC2();
             ec2.describeInstances({}, function (err, data) {
                 if (err) {

@@ -1,5 +1,11 @@
 import { Injectable } from '@angular/core';
-import { Http }       from '@angular/http';
+import { Http, Response }       from '@angular/http';
+import { Observable } from 'rxjs/Rx';
+
+import 'rxjs/add/operator/map';
+import 'rxjs/add/operator/catch';
+
+import { config } from './config/aws-credentials';
 
 import * as AWS from 'aws-sdk';
 
@@ -16,11 +22,7 @@ export class AwsResourceService {
         };
 
         if(resource === 'ec2') {
-            AWS.config.update({
-                region: 'us-east-1',
-                accessKeyId: '',
-                secretAccessKey: ''
-            });
+            AWS.config.update(config);
 
             var ec2:AWS.EC2 = new AWS.EC2();
 
