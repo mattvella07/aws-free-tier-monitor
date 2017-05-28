@@ -9,10 +9,17 @@ import { AwsResourceService } from './aws-resource.service';
 
 export class AwsResourceComponent implements OnInit {
     @Input() resourceName: string;
+    isFreeTierCompliant: boolean;
 
     constructor(private awsResourceService: AwsResourceService) { }
 
     ngOnInit(): void {
-        console.log(this.awsResourceService.freeTierDetails(this.resourceName));
+        //let res = this.awsResourceService.freeTierDetails(this.resourceName);
+        //this.isFreeTierCompliant = res.isFreeTierCompliant;
+
+        this.awsResourceService.freeTierDetails(this.resourceName).then(res => {
+            console.log('then: ' + JSON.stringify(res));
+            this.isFreeTierCompliant = res.isFreeTierCompliant;
+        });
     }
 }
