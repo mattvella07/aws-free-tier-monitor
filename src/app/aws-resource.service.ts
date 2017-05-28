@@ -75,7 +75,8 @@ export class AwsResourceService {
                             }
                         });
                     } else {
-                        resolve( { isFreeTierCompliant: freeTier, details: ec2FreeTierDetails } );
+                        //resolve( { isFreeTierCompliant: freeTier, details: ec2FreeTierDetails } );
+                        reject(new Error('No running instances'));
                     }
                 }
             });

@@ -13,14 +13,18 @@ var aws_resource_service_1 = require("./aws-resource.service");
 var AwsResourceComponent = (function () {
     function AwsResourceComponent(awsResourceService) {
         this.awsResourceService = awsResourceService;
+        this.numInstances = 0;
     }
     AwsResourceComponent.prototype.ngOnInit = function () {
         //let res = this.awsResourceService.freeTierDetails(this.resourceName);
         //this.isFreeTierCompliant = res.isFreeTierCompliant;
         var _this = this;
         this.awsResourceService.freeTierDetails(this.resourceName).then(function (res) {
-            console.log('then: ' + JSON.stringify(res));
-            _this.isFreeTierCompliant = res.isFreeTierCompliant;
+            //console.log('then: ' + JSON.stringify(res));
+            _this.isFreeTierCompliant = res['isFreeTierCompliant'];
+            _this.numInstances = 1;
+        }).catch(function (err) {
+            console.log('OnInit: ' + err);
         });
     };
     return AwsResourceComponent;
