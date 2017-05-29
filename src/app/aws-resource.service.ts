@@ -41,7 +41,8 @@ export class AwsResourceService {
                 allowedOS: ['Linux', 'RHEL', 'SLES', 'Windows'],
                 expirationMonths: 12 
             },
-            freeTier:boolean = false;
+            freeTier:boolean = true,
+            allIns:Object[] = [];
 
             ec2.describeInstances({}, function(err, data) {
                 if(err) {
@@ -49,33 +50,67 @@ export class AwsResourceService {
                     reject(new Error(err.message));
                 } else {
                     //console.log("data: " + JSON.stringify(data));
+                    if(data.Reservations.length > 0) {
+                        let images = [];
 
-                    //Check the following:
-                    //State.Name === 'running'
-                    //InstanceType === 't2.micro'
-                    //ImageId
-                    
-                    if(data.Reservations[0].Instances[0].State.Name === 'running' && 
-                    data.Reservations[0].Instances[0].InstanceType === 't2.micro') {
+                        //Loop through all EC2 instances
+                        for(let res of data.Reservations) {
+                            for(let ins of res['Instances']) {
+                                let i = {};
+
+                                i['InstanceId'] = ins['InstanceId'];
+                                i['ImageId'] = ins['ImageId'];
+                                i['InstanceType'] = ins['InstanceType'];
+                                i['State'] = ins['State']['Name'];
+                                i['AvailabilityZone'] = ins['Placement']['AvailabilityZone'];
+
+                                if(ins['State']['Name'] === 'running' && 
+                                   ins['InstanceType'] === 't2.micro') {
+                                    images.push(ins['ImageId']);
+                                } else {
+                                    freeTier = false;
+                                    i['freeTier'] = false;
+                                }
+
+                                allIns.push(i);
+                            }
+                        }
+
+                        //Set parameters for describeImages call 
                         let params = {
-                            'ImageIds': [data.Reservations[0].Instances[0].ImageId]
+                            ImageIds: images
                         };
+
                         ec2.describeImages(params, function(error, imgData) {
                             if(error) {
                                 console.log('describe images error: ' + error);
                                 reject(new Error(error.message));
                             } else {
-                                //console.log('image: ' + JSON.stringify(imgData));
-                                console.log(imgData.Images[0].Description);
-                                if(imgData.Images[0].Description.toString().toLowerCase().indexOf('amazon linux') !== -1) {
-                                    freeTier = true; 
+                                for(let img of imgData.Images) {
+                                    let idx:number = -1;
+                                    for(let x = 0; x < allIns.length; x++) {
+                                        if(allIns[x]['ImageId'] === img['ImageId'] && !allIns[x].hasOwnProperty('freeTier')) {
+                                            idx = x;
+                                            break;
+                                        }
+                                    }
+
+                                    // !!!!Need to add RHEL and Windows!!!!
+                                    if(img['Description'].toString().toLowerCase().indexOf('amazon linux') !== -1 ||
+                                       img['Description'].toString().toLowerCase().indexOf('suse linux enterprise server') !== -1) {
+                                        allIns[idx]['freeTier'] = true;
+                                        
+                                    } else {
+                                        freeTier = false;
+                                        allIns[idx]['freeTier'] = false;
+                                    }
                                 }
 
-                                resolve( { isFreeTierCompliant: freeTier, details: ec2FreeTierDetails } );
+                                console.log(data.Reservations);
+                                resolve( { isFreeTierCompliant: freeTier, details: ec2FreeTierDetails, instances: allIns } );
                             }
                         });
                     } else {
-                        //resolve( { isFreeTierCompliant: freeTier, details: ec2FreeTierDetails } );
                         reject(new Error('No running instances'));
                     }
                 }

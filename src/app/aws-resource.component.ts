@@ -21,7 +21,7 @@ export class AwsResourceComponent implements OnInit {
         //this.isFreeTierCompliant = res.isFreeTierCompliant;
 
         this.awsResourceService.freeTierDetails(this.resourceName).then(res => {
-            //console.log('then: ' + JSON.stringify(res));
+            console.log('then: ' + JSON.stringify(res));
             this.isFreeTierCompliant = res['isFreeTierCompliant'];
             this.numInstances = 1;
         }).catch(err => {
