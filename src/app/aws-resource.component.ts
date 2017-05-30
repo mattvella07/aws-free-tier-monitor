@@ -11,6 +11,7 @@ export class AwsResourceComponent implements OnInit {
     @Input() resourceName: string;
     isFreeTierCompliant: boolean;
     numInstances: number;
+    instances: Object[];
 
     constructor(private awsResourceService: AwsResourceService) {
         this.numInstances = 0; 
@@ -23,7 +24,8 @@ export class AwsResourceComponent implements OnInit {
         this.awsResourceService.freeTierDetails(this.resourceName).then(res => {
             console.log('then: ' + JSON.stringify(res));
             this.isFreeTierCompliant = res['isFreeTierCompliant'];
-            this.numInstances = 1;
+            this.numInstances = res['instances'].length;
+            this.instances = res['instances'];
         }).catch(err => {
             console.log('OnInit: ' + err);
         });

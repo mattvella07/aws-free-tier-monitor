@@ -1,4 +1,11 @@
 <div *ngIf="numInstances > 0">
     <span>{{resourceName}}</span>
     <span>Within Free Tier: {{isFreeTierCompliant}}</span>
+    <ul>
+        <li *ngFor="let i of instances">
+            <span>{{i['InstanceId']}} - </span>
+            <span>{{i['State']}} - </span>
+            <span>{{i['freeTier']}}</span>
+        </li>
+    </ul>
 </div>

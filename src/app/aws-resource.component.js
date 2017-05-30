@@ -22,7 +22,8 @@ var AwsResourceComponent = (function () {
         this.awsResourceService.freeTierDetails(this.resourceName).then(function (res) {
             console.log('then: ' + JSON.stringify(res));
             _this.isFreeTierCompliant = res['isFreeTierCompliant'];
-            _this.numInstances = 1;
+            _this.numInstances = res['instances'].length;
+            _this.instances = res['instances'];
         }).catch(function (err) {
             console.log('OnInit: ' + err);
         });

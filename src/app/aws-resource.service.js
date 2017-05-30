@@ -51,7 +51,7 @@ var AwsResourceService = (function () {
                     reject(new Error(err.message));
                 }
                 else {
-                    //console.log("data: " + JSON.stringify(data));
+                    console.log("data: " + JSON.stringify(data));
                     if (data.Reservations.length > 0) {
                         var images = [];
                         //Loop through all EC2 instances
@@ -65,8 +65,7 @@ var AwsResourceService = (function () {
                                 i['InstanceType'] = ins['InstanceType'];
                                 i['State'] = ins['State']['Name'];
                                 i['AvailabilityZone'] = ins['Placement']['AvailabilityZone'];
-                                if (ins['State']['Name'] === 'running' &&
-                                    ins['InstanceType'] === 't2.micro') {
+                                if (ins['InstanceType'] === 't2.micro') {
                                     images.push(ins['ImageId']);
                                 }
                                 else {
@@ -76,39 +75,47 @@ var AwsResourceService = (function () {
                                 allIns.push(i);
                             }
                         }
-                        //Set parameters for describeImages call 
-                        var params = {
-                            ImageIds: images
-                        };
-                        ec2.describeImages(params, function (error, imgData) {
-                            if (error) {
-                                console.log('describe images error: ' + error);
-                                reject(new Error(error.message));
-                            }
-                            else {
-                                for (var _i = 0, _a = imgData.Images; _i < _a.length; _i++) {
-                                    var img = _a[_i];
-                                    var idx = -1;
-                                    for (var x = 0; x < allIns.length; x++) {
-                                        if (allIns[x]['ImageId'] === img['ImageId'] && !allIns[x].hasOwnProperty('freeTier')) {
-                                            idx = x;
-                                            break;
+                        if (images.length > 0) {
+                            //Set parameters for describeImages call 
+                            var params = {
+                                ImageIds: images
+                            };
+                            ec2.describeImages(params, function (error, imgData) {
+                                if (error) {
+                                    console.log('describe images error: ' + error);
+                                    reject(new Error(error.message));
+                                }
+                                else {
+                                    for (var _i = 0, _a = imgData.Images; _i < _a.length; _i++) {
+                                        var img = _a[_i];
+                                        var idx = -1;
+                                        for (var x = 0; x < allIns.length; x++) {
+                                            if (allIns[x]['ImageId'] === img['ImageId'] && !allIns[x].hasOwnProperty('freeTier')) {
+                                                idx = x;
+                                                break;
+                                            }
+                                        }
+                                        //Check if Image is part of free tier 
+                                        var imgName = img['Name'].toString().toLowerCase();
+                                        if (imgName.indexOf('amzn-ami') !== -1 ||
+                                            imgName.indexOf('suse-sles') !== -1 ||
+                                            (imgName.indexOf('windows_server') !== -1 && imgName.indexOf('base') !== -1) ||
+                                            imgName.indexOf('rhel') !== -1) {
+                                            allIns[idx]['freeTier'] = true;
+                                        }
+                                        else {
+                                            freeTier = false;
+                                            allIns[idx]['freeTier'] = false;
                                         }
                                     }
-                                    // !!!!Need to add RHEL and Windows!!!!
-                                    if (img['Description'].toString().toLowerCase().indexOf('amazon linux') !== -1 ||
-                                        img['Description'].toString().toLowerCase().indexOf('suse linux enterprise server') !== -1) {
-                                        allIns[idx]['freeTier'] = true;
-                                    }
-                                    else {
-                                        freeTier = false;
-                                        allIns[idx]['freeTier'] = false;
-                                    }
+                                    console.log(data.Reservations);
+                                    resolve({ isFreeTierCompliant: freeTier, details: ec2FreeTierDetails, instances: allIns });
                                 }
-                                console.log(data.Reservations);
-                                resolve({ isFreeTierCompliant: freeTier, details: ec2FreeTierDetails, instances: allIns });
-                            }
-                        });
+                            });
+                        }
+                        else {
+                            resolve({ isFreeTierCompliant: freeTier, details: ec2FreeTierDetails, instances: allIns });
+                        }
                     }
                     else {
                         reject(new Error('No running instances'));
