@@ -1,6 +1,8 @@
-<div *ngIf="numInstances > 0">
-    <span>{{resourceName}}</span>
-    <span>Within Free Tier: {{isFreeTierCompliant}}</span>
+<md-card *ngIf="numInstances > 0">
+    <md-card-header>
+        <md-card-title>{{ resourceName | uppercase }}</md-card-title>
+        <md-card-subtitle>Within Free Tier: {{ isFreeTierCompliant }}</md-card-subtitle>
+    </md-card-header>
     <ul>
         <li *ngFor="let i of instances">
             <span>{{i['InstanceId']}} - </span>
@@ -8,4 +10,4 @@
             <span>{{i['freeTier']}}</span>
         </li>
     </ul>
-</div>
+</md-card>

@@ -8,6 +8,8 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var core_1 = require("@angular/core");
 var platform_browser_1 = require("@angular/platform-browser");
 var http_1 = require("@angular/http");
+var animations_1 = require("@angular/platform-browser/animations");
+var material_1 = require("@angular/material");
 var app_component_1 = require("./app.component");
 var aws_resource_component_1 = require("./aws-resource.component");
 var aws_resource_service_1 = require("./aws-resource.service");
@@ -20,7 +22,9 @@ AppModule = __decorate([
     core_1.NgModule({
         imports: [
             platform_browser_1.BrowserModule,
-            http_1.HttpModule
+            http_1.HttpModule,
+            animations_1.BrowserAnimationsModule,
+            material_1.MdCardModule
         ],
         declarations: [
             app_component_1.AppComponent,
