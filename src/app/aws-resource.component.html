@@ -15,11 +15,11 @@
             </md-card-title>
         </div>
     </md-card-header>
-    <ul [ngClass]="instancesClassName" *ngIf="showInstances" >
-        <li *ngFor="let i of instances">
+    <md-list [ngClass]="instancesClassName" *ngIf="showInstances" >
+        <md-list-item *ngFor="let i of instances">
             <span>{{i['InstanceId']}} - </span>
             <span>{{i['State']}} - </span>
             <span>{{i['freeTier']}}</span>
-        </li>
-    </ul>
+        </md-list-item>
+    </md-list>
 </md-card>
