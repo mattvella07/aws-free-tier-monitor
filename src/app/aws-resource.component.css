@@ -1,3 +1,7 @@
+md-toolbar {
+    margin-bottom: 10px;
+}
+
 .resourceCardTitle {
     width: 100%;
 }

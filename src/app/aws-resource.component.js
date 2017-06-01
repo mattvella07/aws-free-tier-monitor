@@ -16,11 +16,12 @@ var AwsResourceComponent = (function () {
         this.awsResourceService = awsResourceService;
         this.numInstances = 0;
         this.freeTierCompliantIcon = 'fa';
+        this.arrowIcon = 'fa fa-chevron-right';
+        this.showInstances = false;
     }
     AwsResourceComponent.prototype.ngOnInit = function () {
-        //let res = this.awsResourceService.freeTierDetails(this.resourceName);
-        //this.isFreeTierCompliant = res.isFreeTierCompliant;
         var _this = this;
+        this.instancesClassName = this.resourceName + 'Instances';
         this.awsResourceService.freeTierDetails(this.resourceName).then(function (res) {
             console.log('then: ' + JSON.stringify(res));
             _this.isFreeTierCompliant = (res['isFreeTierCompliant']) ? 'Within Free Tier' : 'NOT Within Free Tier';
@@ -30,6 +31,15 @@ var AwsResourceComponent = (function () {
         }).catch(function (err) {
             console.log('OnInit: ' + err);
         });
+    };
+    AwsResourceComponent.prototype.onCardClick = function () {
+        this.showInstances = !this.showInstances;
+        if (this.arrowIcon.indexOf('fa-chevron-right') !== -1) {
+            this.arrowIcon = this.arrowIcon.replace('fa-chevron-right', 'fa-chevron-down');
+        }
+        else {
+            this.arrowIcon = this.arrowIcon.replace('fa-chevron-down', 'fa-chevron-right');
+        }
     };
     return AwsResourceComponent;
 }());
