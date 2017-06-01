@@ -25,7 +25,8 @@ AppModule = __decorate([
             platform_browser_1.BrowserModule,
             http_1.HttpModule,
             animations_1.BrowserAnimationsModule,
-            material_1.MdCardModule
+            material_1.MdCardModule,
+            material_1.MdToolbarModule
         ],
         declarations: [
             app_component_1.AppComponent,

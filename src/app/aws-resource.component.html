@@ -1,7 +1,19 @@
+<md-toolbar color="primary">
+    <span>AWS Free Tier Monitor</span>
+</md-toolbar>
+
 <md-card *ngIf="numInstances > 0">
     <md-card-header>
-        <md-card-title>{{ resourceName | uppercase }}</md-card-title>
-        <md-card-subtitle>Within Free Tier: {{ isFreeTierCompliant }}</md-card-subtitle>
+        <div class="resourceCardTitle">
+            <md-card-title>
+                <i class="fa fa-chevron-right"></i>
+                <span class="resourceName">{{ resourceName | uppercase }}</span>
+                <span class="resourceFreeTier">
+                    {{ isFreeTierCompliant }}
+                    <i [ngClass]="freeTierCompliantIcon"></i>
+                </span>
+            </md-card-title>
+        </div>
     </md-card-header>
     <ul>
         <li *ngFor="let i of instances">

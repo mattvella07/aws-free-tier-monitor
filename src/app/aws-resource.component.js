@@ -15,6 +15,7 @@ var AwsResourceComponent = (function () {
     function AwsResourceComponent(awsResourceService) {
         this.awsResourceService = awsResourceService;
         this.numInstances = 0;
+        this.freeTierCompliantIcon = 'fa';
     }
     AwsResourceComponent.prototype.ngOnInit = function () {
         //let res = this.awsResourceService.freeTierDetails(this.resourceName);
@@ -22,7 +23,8 @@ var AwsResourceComponent = (function () {
         var _this = this;
         this.awsResourceService.freeTierDetails(this.resourceName).then(function (res) {
             console.log('then: ' + JSON.stringify(res));
-            _this.isFreeTierCompliant = res['isFreeTierCompliant'];
+            _this.isFreeTierCompliant = (res['isFreeTierCompliant']) ? 'Within Free Tier' : 'NOT Within Free Tier';
+            _this.freeTierCompliantIcon += (res['isFreeTierCompliant']) ? ' fa-check' : ' fa-times';
             _this.numInstances = res['instances'].length;
             _this.instances = res['instances'];
         }).catch(function (err) {
@@ -38,7 +40,8 @@ __decorate([
 AwsResourceComponent = __decorate([
     core_1.Component({
         selector: 'aws-resource',
-        templateUrl: './aws-resource.component.html'
+        templateUrl: './aws-resource.component.html',
+        styleUrls: ['./aws-resource.component.css']
     }),
     __metadata("design:paramtypes", [aws_resource_service_1.AwsResourceService])
 ], AwsResourceComponent);

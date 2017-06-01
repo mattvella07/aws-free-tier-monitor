@@ -1,0 +1,15 @@
+.resourceCardTitle {
+    width: 100%;
+}
+
+.resourceFreeTier {
+    float: right;
+}
+
+.resourceName {
+    font-weight: bold;
+}
+
+i { 
+    margin-right: 5px;
+}
