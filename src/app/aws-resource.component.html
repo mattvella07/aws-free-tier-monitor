@@ -15,11 +15,22 @@
             </md-card-title>
         </div>
     </md-card-header>
-    <md-list [ngClass]="instancesClassName" *ngIf="showInstances" >
-        <md-list-item *ngFor="let i of instances">
-            <span>{{i['InstanceId']}} - </span>
-            <span>{{i['State']}} - </span>
-            <span>{{i['freeTier']}}</span>
-        </md-list-item>
-    </md-list>
+    <table [ngClass]="instancesClassName" *ngIf="showInstances">
+        <thead>
+            <tr>
+                <th>Instance ID</th>
+                <th>Instance Type</th>
+                <th>State</th>
+                <th>Free Tier</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let i of instances">
+                <td>{{i['InstanceId']}}</td>
+                <td>{{i['InstanceType']}}</td>
+                <td>{{i['State']}}</td>
+                <td>{{i['FreeTier']}}</td>
+            </tr>
+        </tbody>
+    </table>
 </md-card>

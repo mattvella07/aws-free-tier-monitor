@@ -14,6 +14,7 @@ var material_1 = require("@angular/material");
 var app_component_1 = require("./app.component");
 var aws_resource_component_1 = require("./aws-resource.component");
 var aws_resource_service_1 = require("./aws-resource.service");
+var aws_resource_ec2_service_1 = require("./aws-resource-ec2.service");
 var AppModule = (function () {
     function AppModule() {
     }
@@ -26,14 +27,13 @@ AppModule = __decorate([
             http_1.HttpModule,
             animations_1.BrowserAnimationsModule,
             material_1.MdCardModule,
-            material_1.MdToolbarModule,
-            material_1.MdListModule
+            material_1.MdToolbarModule
         ],
         declarations: [
             app_component_1.AppComponent,
             aws_resource_component_1.AwsResourceComponent
         ],
-        providers: [aws_resource_service_1.AwsResourceService],
+        providers: [aws_resource_service_1.AwsResourceService, aws_resource_ec2_service_1.AwsResourceEC2Service],
         bootstrap: [app_component_1.AppComponent]
     })
 ], AppModule);

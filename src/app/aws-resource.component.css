@@ -17,3 +17,10 @@ md-toolbar {
 i { 
     margin-right: 5px;
 }
+
+td {
+    padding-right: 25px;
+    padding-left: 25px;
+    padding-top: 10px;
+    text-align: center;
+}
