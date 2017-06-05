@@ -16,17 +16,18 @@ require("rxjs/add/operator/map");
 require("rxjs/add/operator/catch");
 var aws_credentials_1 = require("./config/aws-credentials");
 var aws_resource_ec2_service_1 = require("./aws-resource-ec2.service");
+var aws_resource_s3_service_1 = require("./aws-resource-s3.service");
 var AWS = require("aws-sdk");
 var AwsResourceService = (function () {
-    function AwsResourceService(ec2Service) {
+    function AwsResourceService(ec2Service, s3Service) {
         this.ec2Service = ec2Service;
+        this.s3Service = s3Service;
         AWS.config.update(aws_credentials_1.config);
     }
     AwsResourceService.prototype.freeTierDetails = function (resource) {
         var _this = this;
         return new Promise(function (resolve, reject) {
             if (resource === 'ec2') {
-                console.log('ec2');
                 var ec2 = new AWS.EC2();
                 _this.ec2Service.getEC2Details(ec2).then(function (res) {
                     console.log(res);
@@ -37,8 +38,8 @@ var AwsResourceService = (function () {
                 });
             }
             else if (resource === 's3') {
-                console.log('s3');
-                _this.getS3Details().then(function (res) {
+                var s3 = new AWS.S3();
+                _this.s3Service.getS3Details(s3).then(function (res) {
                     console.log(res);
                     resolve(res);
                 }).catch(function (err) {
@@ -51,15 +52,11 @@ var AwsResourceService = (function () {
             }
         });
     };
-    AwsResourceService.prototype.getS3Details = function () {
-        return new Promise(function (resolve, reject) {
-        });
-    };
     return AwsResourceService;
 }());
 AwsResourceService = __decorate([
     core_1.Injectable(),
-    __metadata("design:paramtypes", [aws_resource_ec2_service_1.AwsResourceEC2Service])
+    __metadata("design:paramtypes", [aws_resource_ec2_service_1.AwsResourceEC2Service, aws_resource_s3_service_1.AwsResourceS3Service])
 ], AwsResourceService);
 exports.AwsResourceService = AwsResourceService;
 //# sourceMappingURL=aws-resource.service.js.map

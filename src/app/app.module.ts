@@ -8,9 +8,10 @@ import { AppComponent }          from './app.component';
 import { AwsResourceComponent }  from './aws-resource.component';
 import { AwsResourceService }    from './aws-resource.service';
 import { AwsResourceEC2Service } from './aws-resource-ec2.service';
+import { AwsResourceS3Service }  from './aws-resource-s3.service';
 
 @NgModule({
-    imports:      [ 
+    imports: [ 
         BrowserModule,
         HttpModule,
         BrowserAnimationsModule,
@@ -21,8 +22,12 @@ import { AwsResourceEC2Service } from './aws-resource-ec2.service';
         AppComponent,
         AwsResourceComponent
     ],
-    providers: [ AwsResourceService, AwsResourceEC2Service ],
-    bootstrap:    [ AppComponent ]
+    providers: [ 
+        AwsResourceService,
+        AwsResourceEC2Service,
+        AwsResourceS3Service
+    ],
+    bootstrap: [ AppComponent ]
 })
 
 export class AppModule { }

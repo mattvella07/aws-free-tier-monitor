@@ -15,6 +15,7 @@ var app_component_1 = require("./app.component");
 var aws_resource_component_1 = require("./aws-resource.component");
 var aws_resource_service_1 = require("./aws-resource.service");
 var aws_resource_ec2_service_1 = require("./aws-resource-ec2.service");
+var aws_resource_s3_service_1 = require("./aws-resource-s3.service");
 var AppModule = (function () {
     function AppModule() {
     }
@@ -33,7 +34,11 @@ AppModule = __decorate([
             app_component_1.AppComponent,
             aws_resource_component_1.AwsResourceComponent
         ],
-        providers: [aws_resource_service_1.AwsResourceService, aws_resource_ec2_service_1.AwsResourceEC2Service],
+        providers: [
+            aws_resource_service_1.AwsResourceService,
+            aws_resource_ec2_service_1.AwsResourceEC2Service,
+            aws_resource_s3_service_1.AwsResourceS3Service
+        ],
         bootstrap: [app_component_1.AppComponent]
     })
 ], AppModule);

@@ -26,7 +26,7 @@ export class AwsResourceEC2Service {
 
     getEC2Details(ec2:AWS.EC2): Promise<Object> {
         return new Promise<Object>((resolve, reject) => {
-            ec2.describeInstances({}, function(err, data) {
+            ec2.describeInstances({}, function(err:any, data:any) {
                 if(err) {
                     console.log('ERR: ' + err);
                     reject(new Error(err.message));
@@ -63,7 +63,7 @@ export class AwsResourceEC2Service {
                                 ImageIds: images
                             };
 
-                            ec2.describeImages(params, function(error, imgData) {
+                            ec2.describeImages(params, function(error:any, imgData:any) {
                                 if(error) {
                                     console.log('describe images error: ' + error);
                                     reject(new Error(error.message));
