@@ -19,7 +19,7 @@ var AwsResourceEC2Service = (function () {
         this.ec2FreeTierDetails = {
             computeHours: 750,
             allowedInstanceSizes: ['t2.micro'],
-            allowedOS: ['Linux', 'RHEL', 'SLES', 'Windows'],
+            allowedOS: ['amzn-ami', 'rhel', 'suse-sles', ['windows_server', 'base']],
             expirationMonths: 12
         };
         this.freeTier = true;
@@ -48,7 +48,7 @@ var AwsResourceEC2Service = (function () {
                                 i['InstanceType'] = ins['InstanceType'];
                                 i['State'] = ins['State']['Name'];
                                 i['AvailabilityZone'] = ins['Placement']['AvailabilityZone'];
-                                if (ins['InstanceType'] === 't2.micro') {
+                                if (this.ec2FreeTierDetails.allowedInstanceSizes.includes(ins['InstanceType'])) {
                                     images.push(ins['ImageId']);
                                 }
                                 else {
@@ -59,38 +59,61 @@ var AwsResourceEC2Service = (function () {
                             }
                         }
                         if (images.length > 0) {
-                            //Set parameters for describeImages call 
+                            //Set parameters for describeImages call, which is all images that are in the free tier 
+                            //instance type 
                             var params = {
                                 ImageIds: images
                             };
                             ec2.describeImages(params, function (error, imgData) {
+                                var _this = this;
                                 if (error) {
                                     console.log('describe images error: ' + error);
                                     reject(new Error(error.message));
                                 }
                                 else {
-                                    for (var _i = 0, _a = imgData.Images; _i < _a.length; _i++) {
-                                        var img = _a[_i];
+                                    var _loop_1 = function (img) {
+                                        //Match up this image to the index that should be used on the allIns variable 
                                         var idx = -1;
-                                        for (var x = 0; x < this.allIns.length; x++) {
-                                            if (this.allIns[x]['ImageId'] === img['ImageId'] && !this.allIns[x].hasOwnProperty('FreeTier')) {
+                                        for (var x = 0; x < this_1.allIns.length; x++) {
+                                            if (this_1.allIns[x]['ImageId'] === img['ImageId'] && !this_1.allIns[x].hasOwnProperty('FreeTier')) {
                                                 idx = x;
                                                 break;
                                             }
                                         }
                                         //Check if Image is part of free tier 
                                         var imgName = img['Name'].toString().toLowerCase();
-                                        if (imgName.indexOf('amzn-ami') !== -1 ||
-                                            imgName.indexOf('suse-sles') !== -1 ||
-                                            (imgName.indexOf('windows_server') !== -1 && imgName.indexOf('base') !== -1) ||
-                                            imgName.indexOf('rhel') !== -1) {
-                                            this.allIns[idx]['FreeTier'] = true;
+                                        this_1.allIns[idx]['FreeTier'] = false;
+                                        this_1.ec2FreeTierDetails.allowedOS.map(function (os) {
+                                            //If os variable is a string then the imgName only needs to contain
+                                            //that string, otherwise the os variable is an array and imgName
+                                            //needs to contain all strings in the array 
+                                            if (typeof os === 'string') {
+                                                if (imgName.indexOf(os) !== -1) {
+                                                    _this.allIns[idx]['FreeTier'] = true;
+                                                }
+                                            }
+                                            else if (!_this.allIns[idx]['FreeTier']) {
+                                                _this.allIns[idx]['FreeTier'] = true;
+                                                for (var i = 0; i < os.length; i++) {
+                                                    if (imgName.indexOf(os[i]) === -1) {
+                                                        _this.allIns[idx]['FreeTier'] = false;
+                                                    }
+                                                }
+                                            }
+                                        });
+                                        //If any of the instances are not part of free tier, then the overall freeTier 
+                                        //for EC2 should be false 
+                                        if (!this_1.allIns[idx]['FreeTier']) {
+                                            this_1.freeTier = false;
                                         }
-                                        else {
-                                            this.freeTier = false;
-                                            this.allIns[idx]['FreeTier'] = false;
-                                        }
-                                        this.allIns[idx]['OS'] = img['Name'].toString();
+                                        //Add the image name to the allIns variable that is returned 
+                                        this_1.allIns[idx]['OS'] = img['Name'].toString();
+                                    };
+                                    var this_1 = this;
+                                    //Loop through all images 
+                                    for (var _i = 0, _a = imgData.Images; _i < _a.length; _i++) {
+                                        var img = _a[_i];
+                                        _loop_1(img);
                                     }
                                     console.log(data.Reservations);
                                     resolve({ isFreeTierCompliant: this.freeTier, details: this.ec2FreeTierDetails, instances: this.allIns });
