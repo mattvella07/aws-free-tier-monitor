@@ -17,6 +17,14 @@ var AwsResourceS3Service = (function () {
     }
     AwsResourceS3Service.prototype.getS3Details = function (s3) {
         return new Promise(function (resolve, reject) {
+            s3.listBuckets({}, function (err, bucketData) {
+                if (err) {
+                    console.log(err);
+                }
+                else {
+                    console.log(JSON.stringify(bucketData));
+                }
+            });
         });
     };
     return AwsResourceS3Service;

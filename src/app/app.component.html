@@ -1,0 +1,4 @@
+<md-toolbar color="primary">
+    <span>AWS Free Tier Monitor</span>
+</md-toolbar>
+<aws-resource *ngFor="let resource of resources" [resourceName]="resource"></aws-resource>

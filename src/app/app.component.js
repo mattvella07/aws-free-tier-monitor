@@ -19,7 +19,7 @@ var AppComponent = (function () {
 AppComponent = __decorate([
     core_1.Component({
         selector: 'my-app',
-        template: "\n        <aws-resource *ngFor=\"let resource of resources\" [resourceName]=\"resource\"></aws-resource>\n    ",
+        templateUrl: './app.component.html',
     }),
     __metadata("design:paramtypes", [])
 ], AppComponent);
