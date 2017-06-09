@@ -26,7 +26,7 @@ export class AwsResourceEC2Service {
 
     getEC2Details(ec2:AWS.EC2): Promise<Object> {
         return new Promise<Object>((resolve, reject) => {
-            ec2.describeInstances({}, function(err:any, data:any) {
+            ec2.describeInstances({}, (err, data) => {
                 if(err) {
                     console.log('ERR: ' + err);
                     reject(new Error(err.message));
@@ -46,7 +46,7 @@ export class AwsResourceEC2Service {
                                 i['State'] = ins['State']['Name'];
                                 i['AvailabilityZone'] = ins['Placement']['AvailabilityZone'];
 
-                                if(this.ec2FreeTierDetails.allowedInstanceSizes.includes(ins['InstanceType'])) {
+                                if(this.ec2FreeTierDetails['allowedInstanceSizes'].includes(ins['InstanceType'])) {
                                     images.push(ins['ImageId']);
                                 } else {
                                     this.freeTier = false;
@@ -64,7 +64,7 @@ export class AwsResourceEC2Service {
                                 ImageIds: images
                             };
 
-                            ec2.describeImages(params, function(error:any, imgData:any) {
+                            ec2.describeImages(params, (error, imgData) => {
                                 if(error) {
                                     console.log('describe images error: ' + error);
                                     reject(new Error(error.message));
@@ -84,7 +84,7 @@ export class AwsResourceEC2Service {
                                         let imgName = img['Name'].toString().toLowerCase();
                                         this.allIns[idx]['FreeTier'] = false;
 
-                                        this.ec2FreeTierDetails.allowedOS.map((os:any) => {
+                                        this.ec2FreeTierDetails['allowedOS'].map((os:any) => {
                                             //If os variable is a string then the imgName only needs to contain
                                             //that string, otherwise the os variable is an array and imgName
                                             //needs to contain all strings in the array 
@@ -116,7 +116,7 @@ export class AwsResourceEC2Service {
                                     console.log(data.Reservations);
                                     resolve( { isFreeTierCompliant: this.freeTier, details: this.ec2FreeTierDetails, instances: this.allIns } );
                                 }
-                            }.bind(this));
+                            }/*.bind(this)*/);
                         } else {
                             resolve( { isFreeTierCompliant: this.freeTier, details: this.ec2FreeTierDetails, instances: this.allIns } );
                         }
@@ -124,7 +124,7 @@ export class AwsResourceEC2Service {
                         reject(new Error('No running instances'));
                     }
                 }
-            }.bind(this));
+            }/*.bind(this)*/);
         });
     }
 }

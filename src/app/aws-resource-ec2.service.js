@@ -48,14 +48,14 @@ var AwsResourceEC2Service = (function () {
                                 i['InstanceType'] = ins['InstanceType'];
                                 i['State'] = ins['State']['Name'];
                                 i['AvailabilityZone'] = ins['Placement']['AvailabilityZone'];
-                                if (this.ec2FreeTierDetails.allowedInstanceSizes.includes(ins['InstanceType'])) {
+                                if (_this.ec2FreeTierDetails['allowedInstanceSizes'].includes(ins['InstanceType'])) {
                                     images.push(ins['ImageId']);
                                 }
                                 else {
-                                    this.freeTier = false;
+                                    _this.freeTier = false;
                                     i['FreeTier'] = false;
                                 }
-                                this.allIns.push(i);
+                                _this.allIns.push(i);
                             }
                         }
                         if (images.length > 0) {
@@ -65,7 +65,6 @@ var AwsResourceEC2Service = (function () {
                                 ImageIds: images
                             };
                             ec2.describeImages(params, function (error, imgData) {
-                                var _this = this;
                                 if (error) {
                                     console.log('describe images error: ' + error);
                                     reject(new Error(error.message));
@@ -74,16 +73,16 @@ var AwsResourceEC2Service = (function () {
                                     var _loop_1 = function (img) {
                                         //Match up this image to the index that should be used on the allIns variable 
                                         var idx = -1;
-                                        for (var x = 0; x < this_1.allIns.length; x++) {
-                                            if (this_1.allIns[x]['ImageId'] === img['ImageId'] && !this_1.allIns[x].hasOwnProperty('FreeTier')) {
+                                        for (var x = 0; x < _this.allIns.length; x++) {
+                                            if (_this.allIns[x]['ImageId'] === img['ImageId'] && !_this.allIns[x].hasOwnProperty('FreeTier')) {
                                                 idx = x;
                                                 break;
                                             }
                                         }
                                         //Check if Image is part of free tier 
                                         var imgName = img['Name'].toString().toLowerCase();
-                                        this_1.allIns[idx]['FreeTier'] = false;
-                                        this_1.ec2FreeTierDetails.allowedOS.map(function (os) {
+                                        _this.allIns[idx]['FreeTier'] = false;
+                                        _this.ec2FreeTierDetails['allowedOS'].map(function (os) {
                                             //If os variable is a string then the imgName only needs to contain
                                             //that string, otherwise the os variable is an array and imgName
                                             //needs to contain all strings in the array 
@@ -103,32 +102,31 @@ var AwsResourceEC2Service = (function () {
                                         });
                                         //If any of the instances are not part of free tier, then the overall freeTier 
                                         //for EC2 should be false 
-                                        if (!this_1.allIns[idx]['FreeTier']) {
-                                            this_1.freeTier = false;
+                                        if (!_this.allIns[idx]['FreeTier']) {
+                                            _this.freeTier = false;
                                         }
                                         //Add the image name to the allIns variable that is returned 
-                                        this_1.allIns[idx]['OS'] = img['Name'].toString();
+                                        _this.allIns[idx]['OS'] = img['Name'].toString();
                                     };
-                                    var this_1 = this;
                                     //Loop through all images 
                                     for (var _i = 0, _a = imgData.Images; _i < _a.length; _i++) {
                                         var img = _a[_i];
                                         _loop_1(img);
                                     }
                                     console.log(data.Reservations);
-                                    resolve({ isFreeTierCompliant: this.freeTier, details: this.ec2FreeTierDetails, instances: this.allIns });
+                                    resolve({ isFreeTierCompliant: _this.freeTier, details: _this.ec2FreeTierDetails, instances: _this.allIns });
                                 }
-                            }.bind(this));
+                            } /*.bind(this)*/);
                         }
                         else {
-                            resolve({ isFreeTierCompliant: this.freeTier, details: this.ec2FreeTierDetails, instances: this.allIns });
+                            resolve({ isFreeTierCompliant: _this.freeTier, details: _this.ec2FreeTierDetails, instances: _this.allIns });
                         }
                     }
                     else {
                         reject(new Error('No running instances'));
                     }
                 }
-            }.bind(_this));
+            } /*.bind(this)*/);
         });
     };
     return AwsResourceEC2Service;
