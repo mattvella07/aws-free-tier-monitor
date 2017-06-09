@@ -9,6 +9,6 @@ export class AppComponent  {
     resources: String[];
 
     constructor() {
-        this.resources = ['ec2'];
+        this.resources = ['ec2', 's3', 'rds'];
     }
 }

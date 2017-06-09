@@ -9,6 +9,7 @@ import { AwsResourceComponent }  from './aws-resource.component';
 import { AwsResourceService }    from './aws-resource.service';
 import { AwsResourceEC2Service } from './aws-resource-ec2.service';
 import { AwsResourceS3Service }  from './aws-resource-s3.service';
+import { AwsResourceRDSService } from './aws-resource-rds.service';
 
 @NgModule({
     imports: [ 
@@ -25,7 +26,8 @@ import { AwsResourceS3Service }  from './aws-resource-s3.service';
     providers: [ 
         AwsResourceService,
         AwsResourceEC2Service,
-        AwsResourceS3Service
+        AwsResourceS3Service,
+        AwsResourceRDSService
     ],
     bootstrap: [ AppComponent ]
 })

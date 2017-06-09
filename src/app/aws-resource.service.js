@@ -17,11 +17,13 @@ require("rxjs/add/operator/catch");
 var aws_credentials_1 = require("./config/aws-credentials");
 var aws_resource_ec2_service_1 = require("./aws-resource-ec2.service");
 var aws_resource_s3_service_1 = require("./aws-resource-s3.service");
+var aws_resource_rds_service_1 = require("./aws-resource-rds.service");
 var AWS = require("aws-sdk");
 var AwsResourceService = (function () {
-    function AwsResourceService(ec2Service, s3Service) {
+    function AwsResourceService(ec2Service, s3Service, rdsService) {
         this.ec2Service = ec2Service;
         this.s3Service = s3Service;
+        this.rdsService = rdsService;
         AWS.config.update(aws_credentials_1.config);
     }
     AwsResourceService.prototype.freeTierDetails = function (resource) {
@@ -30,20 +32,27 @@ var AwsResourceService = (function () {
             if (resource === 'ec2') {
                 var ec2 = new AWS.EC2();
                 _this.ec2Service.getEC2Details(ec2).then(function (res) {
-                    console.log(res);
                     resolve(res);
                 }).catch(function (err) {
-                    console.log(err);
+                    console.log("EC2 error: " + err);
                     reject(new Error(err.message));
                 });
             }
             else if (resource === 's3') {
                 var s3 = new AWS.S3();
                 _this.s3Service.getS3Details(s3).then(function (res) {
-                    console.log(res);
                     resolve(res);
                 }).catch(function (err) {
-                    console.log(err);
+                    console.log("S3 error: " + err);
+                    reject(new Error(err.message));
+                });
+            }
+            else if (resource === 'rds') {
+                var rds = new AWS.RDS();
+                _this.rdsService.getRDSDetails(rds).then(function (res) {
+                    resolve(res);
+                }).catch(function (err) {
+                    console.log("RDS error: " + err);
                     reject(new Error(err.message));
                 });
             }
@@ -56,7 +65,7 @@ var AwsResourceService = (function () {
 }());
 AwsResourceService = __decorate([
     core_1.Injectable(),
-    __metadata("design:paramtypes", [aws_resource_ec2_service_1.AwsResourceEC2Service, aws_resource_s3_service_1.AwsResourceS3Service])
+    __metadata("design:paramtypes", [aws_resource_ec2_service_1.AwsResourceEC2Service, aws_resource_s3_service_1.AwsResourceS3Service, aws_resource_rds_service_1.AwsResourceRDSService])
 ], AwsResourceService);
 exports.AwsResourceService = AwsResourceService;
 //# sourceMappingURL=aws-resource.service.js.map
