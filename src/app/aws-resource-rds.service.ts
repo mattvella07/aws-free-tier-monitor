@@ -7,7 +7,7 @@ import * as AWS from 'aws-sdk';
 
 @Injectable()
 export class AwsResourceRDSService {
-    rdsFreeTierDetails:Object;
+    rdsFreeTierDetails: Object;
 
     constructor() {
         this.rdsFreeTierDetails = {
@@ -21,30 +21,29 @@ export class AwsResourceRDSService {
         };
     }
 
-    getRDSDetails(rds:AWS.RDS):Promise<Object> {
+    getRDSDetails(rds: AWS.RDS): Promise<Object> {
         return new Promise<Object>((resolve, reject) => {
-            rds.describeDBInstances((err, dbData) => {
-                if(err) {
-                    console.log('DB ERR: ' + err);
-                    reject(new Error(err.message));
-                } else {
-                    console.log('DB data: ' + JSON.stringify(dbData));
+            /*rds.describeDBInstances().promise().then(data => {
 
-                    if(dbData.DBInstances.length > 0) {
+            }).catch(err => {
 
+            });*/
+            rds.describeDBInstances().promise().then(dbData => {
+                console.log('DB data: ' + JSON.stringify(dbData));
 
-
-
-                    }
-
-                    /* rds.describeDBSnapshots((err, snapData) => {
-                        if(err) {
-                            console.log("describeDBSnapshots Error: " + err);
-                        } else {
-                            console.log("SNAP: " + JSON.stringify(snapData));
-                        }
-                    });*/
+                if (dbData.DBInstances.length > 0) {
+                    
                 }
+
+                /*rds.describeDBSnapshots().promise().then(snapData => {
+                    console.log("SNAP: " + JSON.stringify(snapData));
+                }).catch(err => {
+                    console.log("describeDBSnapshots Error: " + err);
+                });*/
+
+            }).catch(err => {
+                console.log('DB ERR: ' + err);
+                reject(new Error(err.message));
             });
         });
     }

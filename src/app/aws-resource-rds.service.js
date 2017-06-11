@@ -26,23 +26,23 @@ var AwsResourceRDSService = (function () {
     }
     AwsResourceRDSService.prototype.getRDSDetails = function (rds) {
         return new Promise(function (resolve, reject) {
-            rds.describeDBInstances(function (err, dbData) {
-                if (err) {
-                    console.log('DB ERR: ' + err);
-                    reject(new Error(err.message));
+            /*rds.describeDBInstances().promise().then(data => {
+
+            }).catch(err => {
+
+            });*/
+            rds.describeDBInstances().promise().then(function (dbData) {
+                console.log('DB data: ' + JSON.stringify(dbData));
+                if (dbData.DBInstances.length > 0) {
                 }
-                else {
-                    console.log('DB data: ' + JSON.stringify(dbData));
-                    if (dbData.DBInstances.length > 0) {
-                    }
-                    /* rds.describeDBSnapshots((err, snapData) => {
-                        if(err) {
-                            console.log("describeDBSnapshots Error: " + err);
-                        } else {
-                            console.log("SNAP: " + JSON.stringify(snapData));
-                        }
-                    });*/
-                }
+                /*rds.describeDBSnapshots().promise().then(snapData => {
+                    console.log("SNAP: " + JSON.stringify(snapData));
+                }).catch(err => {
+                    console.log("describeDBSnapshots Error: " + err);
+                });*/
+            }).catch(function (err) {
+                console.log('DB ERR: ' + err);
+                reject(new Error(err.message));
             });
         });
     };

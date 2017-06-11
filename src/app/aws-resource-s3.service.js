@@ -17,20 +17,16 @@ var AwsResourceS3Service = (function () {
     }
     AwsResourceS3Service.prototype.getS3Details = function (s3) {
         return new Promise(function (resolve, reject) {
-            /*s3.listBuckets(function(err:any, bucketData:any) {
-                if(err) {
-                    console.log(err);
-                } else {
-                    console.log(JSON.stringify(bucketData));
-                }
+            /*s3.listBuckets().promise().then(bucketData => {
+                console.log(JSON.stringify(bucketData));
+            }).catch(err => {
+                console.log(err);
             });
 
-            s3.listObjects(function(err:any, bucketData:any) {
-                if(err) {
-                    console.log(err);
-                } else {
-                    console.log(JSON.stringify(bucketData));
-                }
+            s3.listObjects().promise().then(bucketData => {
+                console.log(JSON.stringify(bucketData));
+            }).catch(err => {
+                console.log(err);
             });*/
         });
     };
