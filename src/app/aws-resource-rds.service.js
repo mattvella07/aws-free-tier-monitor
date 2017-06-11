@@ -23,23 +23,48 @@ var AwsResourceRDSService = (function () {
             dbSnapshotStorage: 20,
             expirationMonths: 12
         };
+        this.freeTier = true;
+        this.allDBs = [];
     }
     AwsResourceRDSService.prototype.getRDSDetails = function (rds) {
+        var _this = this;
         return new Promise(function (resolve, reject) {
-            /*rds.describeDBInstances().promise().then(data => {
-
-            }).catch(err => {
-
-            });*/
             rds.describeDBInstances().promise().then(function (dbData) {
                 console.log('DB data: ' + JSON.stringify(dbData));
                 if (dbData.DBInstances.length > 0) {
+                    var totalMem = 0;
+                    //Loop through all DBs 
+                    for (var _i = 0, _a = dbData.DBInstances; _i < _a.length; _i++) {
+                        var db = _a[_i];
+                        var i = {};
+                        i['InstanceId'] = db['DBInstanceIdentifier'];
+                        i['State'] = db['DBInstanceStatus'];
+                        i['AvailabilityZone'] = db['AvailabilityZone'];
+                        i['InstanceCreateTime'] = db['InstanceCreateTime'];
+                        i['MultiAZ'] = db['MultiAZ'];
+                        i['StorageType'] = db['StorageType'];
+                        i['AllocatedStorage'] = db['AllocatedStorage'];
+                        i['Engine'] = db['Engine'];
+                        i['InstanceType'] = db['DBInstanceClass'];
+                        i['FreeTier'] = true;
+                        _this.allDBs.push(i);
+                        if (!_this.rdsFreeTierDetails['allowedInstanceSizes'].includes(db['DBInstanceClass']) ||
+                            !_this.rdsFreeTierDetails['allowedEngines'].includes(db['Engine']) ||
+                            _this.rdsFreeTierDetails['dbStorageType'] !== db['StorageType']) {
+                            _this.freeTier = i['FreeTier'] = false;
+                        }
+                        totalMem += db['AllocatedStorage'];
+                    }
+                    if (totalMem > 20) {
+                        _this.freeTier = false;
+                    }
                 }
-                /*rds.describeDBSnapshots().promise().then(snapData => {
-                    console.log("SNAP: " + JSON.stringify(snapData));
-                }).catch(err => {
+                rds.describeDBSnapshots().promise().then(function (snapData) {
+                    resolve({ isFreeTierCompliant: _this.freeTier, details: _this.rdsFreeTierDetails, instances: _this.allDBs });
+                }).catch(function (err) {
                     console.log("describeDBSnapshots Error: " + err);
-                });*/
+                    reject(new Error(err.message));
+                });
             }).catch(function (err) {
                 console.log('DB ERR: ' + err);
                 reject(new Error(err.message));
